@@ -40,7 +40,7 @@ namespace Strategia
                 if (aspectFitter != null)
                 {
                     RectTransform rect = aspectFitter.GetComponent<RectTransform>();
-                    rect.sizeDelta = new Vector2(Math.Min(1424f, Screen.width), rect.sizeDelta.y);
+					rect.sizeDelta = new Vector2(Math.Min(GetUserWidth(), Screen.width), rect.sizeDelta.y);
                 }
 
                 // Clean up the strategy max text
@@ -53,6 +53,26 @@ namespace Strategia
                 }
             }
         }
+
+		int GetUserWidth ()
+		{
+			// Return the width define by user from AdminWidth.cfg
+			string settingPath = KSPUtil.ApplicationRootPath + "GameData/Strategia/AdminWidth.cfg";
+			ConfigNode userWidth = ConfigNode.Load (settingPath);
+			if (userWidth != null)
+			{
+				if (userWidth.HasValue("userWidth"))
+				{
+					return int.Parse (userWidth.GetValue ("userWidth"));
+				}
+			}
+
+			// If AdminWidth.cfg doesn't exist
+			userWidth = new ConfigNode ();
+			userWidth.AddValue("userWidth", 1424, "For tri-monitor user, change the administration building screen width, scrollbar if lower than 1424");
+			userWidth.Save (settingPath);
+			return 1424;
+		}
     }
 
     public static class TransformExtns
